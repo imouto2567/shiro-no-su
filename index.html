@@ -95,6 +95,35 @@
       transform: translate(-50%, -50%);
       font-size: 14px;
     }
+
+    /* ===== 墨っぽい滲み演出 ===== */
+    .ink-out {
+      opacity: 0;
+      filter: blur(7px);
+      transform: translate(-50%, -50%) scale(1.06);
+      transition: opacity 2s ease, filter 2s ease, transform 2s ease;
+    }
+
+    .menu.visible {
+      animation: inkFadeIn 2.5s ease forwards;
+    }
+
+    @keyframes inkFadeIn {
+      0% {
+        opacity: 0;
+        filter: blur(8px);
+        transform: translateY(6px);
+      }
+      60% {
+        opacity: 0.6;
+        filter: blur(4px);
+      }
+      100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 
@@ -124,12 +153,12 @@
       const title = document.getElementById("title");
       const menu = document.getElementById("menu");
 
-      // タイトルをフェードアウト
-      title.classList.remove("visible");
-      title.classList.add("hidden");
+      // 墨が滲むようにタイトルを消す
+      title.classList.add("ink-out");
 
-      // 少し待ってからメニューをフェードイン
+      // 余韻のあと、メニューを浮かび上がらせる
       setTimeout(() => {
+        title.style.display = "none";
         menu.classList.remove("hidden");
         menu.classList.add("visible");
       }, 2000);
