@@ -7,10 +7,11 @@
 
   <style>
     /* ===== フォント読み込み ===== */
-@font-face {
-  font-family: "ShiroNoSu";
-  src: url("assets/fonts/HannariMincho-Regular.otf") format("opentype");
-}
+    @font-face {
+      font-family: "ShiroNoSu";
+      src: url("assets/fonts/HannariMincho-Regular.otf") format("opentype");
+    }
+
     /* ===== 全体 ===== */
     body {
       margin: 0;
@@ -23,7 +24,6 @@
       color: #777;
     }
 
-    /* ===== 中央配置 ===== */
     .container {
       position: relative;
       width: 100%;
@@ -36,10 +36,25 @@
     }
 
     a:active {
-      opacity: 0.6; /* タップ時の反応 */
+      opacity: 0.6;
     }
 
-    /* ===== 個別配置（画像準拠） ===== */
+    /* ===== フェード制御 ===== */
+    .fade {
+      transition: opacity 2s ease;
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ===== 配置 ===== */
     .title {
       position: absolute;
       top: 45%;
@@ -86,24 +101,39 @@
 <body>
   <div class="container">
 
-    <div class="title">しろのす</div>
+    <!-- タイトル -->
+    <div class="title fade visible" id="title">しろのす</div>
 
-    <div class="diary">
-      <a href="diary/">にっき</a>
-    </div>
-
-    <div class="white">
-      <a href="white-ritsu/">白律ろーと局</a>
-    </div>
-
-    <div class="question">
-      <a href="question/">質疑妹答</a>
-    </div>
-
-    <div class="about">
-      <a href="about/">ここについて</a>
+    <!-- メニュー -->
+    <div class="menu fade hidden" id="menu">
+      <div class="diary"><a href="diary/">にっき</a></div>
+      <div class="white"><a href="white-ritsu/">白律ろーと局</a></div>
+      <div class="question"><a href="question/">質疑妹答</a></div>
+      <div class="about"><a href="about/">ここについて</a></div>
     </div>
 
   </div>
+
+  <script>
+    let activated = false;
+
+    document.body.addEventListener("click", () => {
+      if (activated) return;
+      activated = true;
+
+      const title = document.getElementById("title");
+      const menu = document.getElementById("menu");
+
+      // タイトルをフェードアウト
+      title.classList.remove("visible");
+      title.classList.add("hidden");
+
+      // 少し待ってからメニューをフェードイン
+      setTimeout(() => {
+        menu.classList.remove("hidden");
+        menu.classList.add("visible");
+      }, 2000);
+    });
+  </script>
 </body>
 </html>
