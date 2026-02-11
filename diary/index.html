@@ -1,61 +1,28 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<title>日記</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body {
-  margin: 0;
-  height: 100vh;
-  background: #f2f2f2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Hiragino Mincho ProN", serif;
-  color: #777;
-}
-
-.year-container {
-  text-align: center;
-}
-
-.year {
-  font-size: 4vh;
-  margin: 2vh 0;
-  cursor: pointer;
-  transition: opacity 0.4s ease;
-}
-
-.year:hover {
-  opacity: 0.5;
-}
-</style>
-</head>
-
-<body>
-
-<div class="year-container" id="yearContainer">
-</div>
-
 <script>
-/* ===== 年数データ（ここを増やすだけで追加可能） ===== */
-const years = [2026];
+fetch("posts.json")
+  .then(response => response.json())
+  .then(posts => {
 
-/* ===== 表示処理 ===== */
-const container = document.getElementById("yearContainer");
+    const container = document.getElementById("yearContainer");
 
-years.forEach(year => {
-  const div = document.createElement("div");
-  div.className = "year";
-  div.textContent = year + "年";
-  div.onclick = () => {
-    alert(year + "年のページへ"); // 今は仮。あとで月ページへ飛ばせる
-  };
-  container.appendChild(div);
-});
+    // 年だけ抽出（重複削除）
+    const years = [...new Set(
+      posts.map(post => post.date.split("-")[0])
+    )];
+
+    years.sort((a,b)=>b-a); // 新しい年を上に
+
+    years.forEach(year => {
+      const div = document.createElement("div");
+      div.className = "year";
+      div.textContent = year + "年";
+
+      div.onclick = () => {
+        alert(year + "年のページへ（次に作る）");
+      };
+
+      container.appendChild(div);
+    });
+
+  });
 </script>
-
-</body>
-</html>
