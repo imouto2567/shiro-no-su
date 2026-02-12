@@ -1,3 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>日記</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Hiragino Mincho ProN", serif;
+  color: #777;
+}
+
+.year-container {
+  text-align: center;
+}
+
+.year {
+  font-size: 4vh;
+  margin: 2vh 0;
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+}
+
+.year:hover {
+  opacity: 0.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="year-container" id="yearContainer"></div>
+
 <script>
 fetch("posts.json")
   .then(response => response.json())
@@ -18,9 +58,7 @@ fetch("posts.json")
         const div = document.createElement("div");
         div.className = "year";
         div.textContent = year + "年";
-
         div.onclick = () => showMonths(year);
-
         container.appendChild(div);
       });
     }
@@ -40,13 +78,10 @@ fetch("posts.json")
         const div = document.createElement("div");
         div.className = "year";
         div.textContent = parseInt(month) + "月";
-
         div.onclick = () => showPosts(year, month);
-
         container.appendChild(div);
       });
 
-      // 戻るボタン
       const back = document.createElement("div");
       back.className = "year";
       back.textContent = "← もどる";
@@ -67,9 +102,7 @@ fetch("posts.json")
         const div = document.createElement("div");
         div.className = "year";
         div.textContent = post.title;
-
         div.onclick = () => showPostContent(post);
-
         container.appendChild(div);
       });
 
@@ -105,5 +138,11 @@ fetch("posts.json")
     }
 
     showYears();
+  })
+  .catch(error => {
+    console.error("JSON読み込みエラー:", error);
   });
 </script>
+
+</body>
+</html>
