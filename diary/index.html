@@ -8,27 +8,54 @@
 <style>
 body {
   margin: 0;
-  height: 100vh;
   background: #f2f2f2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-family: "Hiragino Mincho ProN", serif;
   color: #777;
 }
 
+/* 全体コンテナ */
 .year-container {
   text-align: center;
+  padding: 12vh 5vw;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
+/* 年・月・記事タイトル */
 .year {
   font-size: 4vh;
-  margin: 2vh 0;
+  margin: 2.5vh 0;
   cursor: pointer;
   transition: opacity 0.4s ease;
 }
 
 .year:hover {
+  opacity: 0.5;
+}
+
+/* 記事タイトル（本文ページ用） */
+.post-title {
+  font-size: 3.2vh;
+  margin-bottom: 5vh;
+}
+
+/* 本文 */
+.post-content {
+  font-size: 2.1vh;
+  line-height: 1.9;
+  text-align: left;
+  white-space: normal;
+}
+
+/* 戻るボタン */
+.back-button {
+  margin-top: 6vh;
+  font-size: 2.5vh;
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+}
+
+.back-button:hover {
   opacity: 0.5;
 }
 </style>
@@ -83,7 +110,7 @@ fetch("posts.json")
       });
 
       const back = document.createElement("div");
-      back.className = "year";
+      back.className = "back-button";
       back.textContent = "← もどる";
       back.onclick = showYears;
       container.appendChild(back);
@@ -107,7 +134,7 @@ fetch("posts.json")
       });
 
       const back = document.createElement("div");
-      back.className = "year";
+      back.className = "back-button";
       back.textContent = "← もどる";
       back.onclick = () => showMonths(year);
       container.appendChild(back);
@@ -117,21 +144,20 @@ fetch("posts.json")
       container.innerHTML = "";
 
       const title = document.createElement("div");
-      title.className = "year";
-      title.style.fontSize = "3vh";
+      title.className = "post-title";
       title.textContent = post.title;
 
       const content = document.createElement("div");
-      content.style.marginTop = "3vh";
-      content.style.fontSize = "2vh";
-      content.textContent = post.content;
+      content.className = "post-content";
+
+      // 改行を反映
+      content.innerHTML = post.content.replace(/\n/g, "<br>");
 
       container.appendChild(title);
       container.appendChild(content);
 
       const back = document.createElement("div");
-      back.className = "year";
-      back.style.marginTop = "4vh";
+      back.className = "back-button";
       back.textContent = "← もどる";
       back.onclick = showYears;
       container.appendChild(back);
