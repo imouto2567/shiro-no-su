@@ -16,15 +16,16 @@ body {
 /* 全体コンテナ */
 .year-container {
   text-align: center;
-  padding: 12vh 5vw;
+  padding-top: 15vh;
+  padding-bottom: 20vh;
   max-width: 700px;
   margin: 0 auto;
 }
 
-/* 年・月・記事タイトル */
+/* 年表示 */
 .year {
-  font-size: 4vh;
-  margin: 2.5vh 0;
+  font-size: 4.2vh;
+  margin: 3vh 0;
   cursor: pointer;
   transition: opacity 0.4s ease;
 }
@@ -33,28 +34,52 @@ body {
   opacity: 0.5;
 }
 
-/* 記事タイトル（本文ページ用） */
+/* ナビ（もっとまえ） */
+.nav-more {
+  margin-top: 6vh;
+  font-size: 2.6vh;
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+}
+
+.nav-more:hover {
+  opacity: 0.5;
+}
+
+/* 下部ナビ */
+.nav-bottom {
+  margin-top: 10vh;
+}
+
+.nav-inline {
+  display: inline-block;
+  margin: 0 5vw;
+  font-size: 2.6vh;
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+}
+
+.nav-inline:hover {
+  opacity: 0.5;
+}
+
+/* 記事ページ */
 .post-title {
   font-size: 3.2vh;
   margin-bottom: 5vh;
 }
 
-/* 本文 */
 .post-content {
   font-size: 2.1vh;
   line-height: 1.9;
   text-align: left;
-  white-space: normal;
 }
 
-/* 戻るボタン */
 .back-button {
   margin-top: 6vh;
   font-size: 2.5vh;
   cursor: pointer;
-  transition: opacity 0.4s ease;
 }
-
 .back-button:hover {
   opacity: 0.5;
 }
@@ -67,107 +92,155 @@ body {
 
 <script>
 fetch("posts.json")
-  .then(response => response.json())
-  .then(posts => {
+.then(response => response.json())
+.then(posts => {
 
-    const container = document.getElementById("yearContainer");
+  const container = document.getElementById("yearContainer");
 
-    function showYears() {
-      container.innerHTML = "";
+  // ===== 年一覧生成 =====
+  const allYears = [...new Set(
+    posts.map(post => post.date.split("-")[0])
+  )].sort((a,b)=>b-a);
 
-      const years = [...new Set(
-        posts.map(post => post.date.split("-")[0])
-      )];
+  const blockSize = 5;
+  const yearBlocks = [];
 
-      years.sort((a,b)=>b-a);
+  for (let i = 0; i < allYears.length; i += blockSize) {
+    yearBlocks.push(allYears.slice(i, i + blockSize));
+  }
 
-      years.forEach(year => {
-        const div = document.createElement("div");
-        div.className = "year";
-        div.textContent = year + "年";
-        div.onclick = () => showMonths(year);
-        container.appendChild(div);
-      });
+  let currentBlockIndex = 0;
+
+  function showYears(index = 0) {
+    container.innerHTML = "";
+    currentBlockIndex = index;
+
+    const yearsToShow = yearBlocks[index] || [];
+
+    yearsToShow.forEach(year => {
+      const div = document.createElement("div");
+      div.className = "year";
+      div.textContent = year + "年";
+      div.onclick = () => showMonths(year);
+      container.appendChild(div);
+    });
+
+    createNavigation();
+  }
+
+  function createNavigation() {
+
+    const totalBlocks = yearBlocks.length;
+
+    // ===== もっとまえ =====
+    if (currentBlockIndex < totalBlocks - 1) {
+      const more = document.createElement("div");
+      more.className = "nav-more";
+      more.textContent = "もっとまえ";
+      more.onclick = () => showYears(currentBlockIndex + 1);
+      container.appendChild(more);
     }
 
-    function showMonths(year) {
-      container.innerHTML = "";
+    // ===== 下部ナビ（中間 or 最古のみ） =====
+    if (currentBlockIndex > 0) {
 
-      const months = [...new Set(
-        posts
-          .filter(post => post.date.startsWith(year))
-          .map(post => post.date.split("-")[1])
-      )];
+      const navBottom = document.createElement("div");
+      navBottom.className = "nav-bottom";
 
-      months.sort((a,b)=>b-a);
+      // さいきん（1つ戻る）
+      const recent = document.createElement("div");
+      recent.className = "nav-inline";
+      recent.textContent = "さいきん";
+      recent.onclick = () => showYears(currentBlockIndex - 1);
 
-      months.forEach(month => {
-        const div = document.createElement("div");
-        div.className = "year";
-        div.textContent = parseInt(month) + "月";
-        div.onclick = () => showPosts(year, month);
-        container.appendChild(div);
-      });
+      // いま（最新へ戻る）
+      const now = document.createElement("div");
+      now.className = "nav-inline";
+      now.textContent = "いま";
+      now.onclick = () => showYears(0);
 
-      const back = document.createElement("div");
-      back.className = "back-button";
-      back.textContent = "← もどる";
-      back.onclick = showYears;
-      container.appendChild(back);
+      navBottom.appendChild(recent);
+      navBottom.appendChild(now);
+      container.appendChild(navBottom);
     }
+  }
 
-    function showPosts(year, month) {
-      container.innerHTML = "";
+  // ===== 月表示 =====
+  function showMonths(year) {
+    container.innerHTML = "";
 
-      const filtered = posts.filter(post =>
-        post.date.startsWith(year + "-" + month)
-      );
+    const months = [...new Set(
+      posts
+        .filter(post => post.date.startsWith(year))
+        .map(post => post.date.split("-")[1])
+    )].sort((a,b)=>b-a);
 
-      filtered.sort((a,b)=> b.date.localeCompare(a.date));
+    months.forEach(month => {
+      const div = document.createElement("div");
+      div.className = "year";
+      div.textContent = parseInt(month) + "月";
+      div.onclick = () => showPosts(year, month);
+      container.appendChild(div);
+    });
 
-      filtered.forEach(post => {
-        const div = document.createElement("div");
-        div.className = "year";
-        div.textContent = post.title;
-        div.onclick = () => showPostContent(post);
-        container.appendChild(div);
-      });
+    const back = document.createElement("div");
+    back.className = "back-button";
+    back.textContent = "← もどる";
+    back.onclick = () => showYears(currentBlockIndex);
+    container.appendChild(back);
+  }
 
-      const back = document.createElement("div");
-      back.className = "back-button";
-      back.textContent = "← もどる";
-      back.onclick = () => showMonths(year);
-      container.appendChild(back);
-    }
+  // ===== 記事一覧 =====
+  function showPosts(year, month) {
+    container.innerHTML = "";
 
-    function showPostContent(post) {
-      container.innerHTML = "";
+    const filtered = posts.filter(post =>
+      post.date.startsWith(year + "-" + month)
+    ).sort((a,b)=> b.date.localeCompare(a.date));
 
-      const title = document.createElement("div");
-      title.className = "post-title";
-      title.textContent = post.title;
+    filtered.forEach(post => {
+      const div = document.createElement("div");
+      div.className = "year";
+      div.textContent = post.title;
+      div.onclick = () => showPostContent(post);
+      container.appendChild(div);
+    });
 
-      const content = document.createElement("div");
-      content.className = "post-content";
+    const back = document.createElement("div");
+    back.className = "back-button";
+    back.textContent = "← もどる";
+    back.onclick = () => showMonths(year);
+    container.appendChild(back);
+  }
 
-      // 改行を反映
-      content.innerHTML = post.content.replace(/\n/g, "<br>");
+  // ===== 記事本文 =====
+  function showPostContent(post) {
+    container.innerHTML = "";
 
-      container.appendChild(title);
-      container.appendChild(content);
+    const title = document.createElement("div");
+    title.className = "post-title";
+    title.textContent = post.title;
 
-      const back = document.createElement("div");
-      back.className = "back-button";
-      back.textContent = "← もどる";
-      back.onclick = showYears;
-      container.appendChild(back);
-    }
+    const content = document.createElement("div");
+    content.className = "post-content";
+    content.innerHTML = post.content.replace(/\n/g, "<br>");
 
-    showYears();
-  })
-  .catch(error => {
-    console.error("JSON読み込みエラー:", error);
-  });
+    container.appendChild(title);
+    container.appendChild(content);
+
+    const back = document.createElement("div");
+    back.className = "back-button";
+    back.textContent = "← もどる";
+    back.onclick = () => showYears(currentBlockIndex);
+    container.appendChild(back);
+  }
+
+  showYears(0);
+
+})
+.catch(error => {
+  console.error("JSON読み込みエラー:", error);
+});
 </script>
 
 </body>
