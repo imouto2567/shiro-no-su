@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Year</title>
+</head>
+<body>
+
+<h1 id="yearTitle"></h1>
+<div id="monthContainer"></div>
+
+<script>
+  // URLから year を取得
+  const params = new URLSearchParams(window.location.search);
+  const selectedYear = params.get("year");
+
+  document.getElementById("yearTitle").textContent = selectedYear + "年";
+
+  fetch("posts.json")
+    .then(response => response.json())
+    .then(posts => {
+
+      // その年の記事だけ抽出
+      const filtered = posts.filter(post =>
+        post.date.startsWith(selectedYear)
+      );
+
+      // 月を抽出（重複削除）
+      const months = [...new Set(
+        filtered.map(post => post.date.split("-")[1])
+      )];
+
+      months.sort((a, b) => b - a);
+
+      const container = document.getElementById("monthContainer");
+
+      months.forEach(month => {
+        const div = document.createElement("div");
+        div.textContent = month + "月";
+
+        div.onclick = () => {
+          window.location.href =
+            "month.html?year=" + selectedYear + "&month=" + month;
+        };
+
+        container.appendChild(div);
+      });
+
+    });
+</script>
+
+</body>
+</html>
