@@ -22,10 +22,11 @@ body {
   margin: 0 auto;
 }
 
-/* 年表示 */
+/* 年表示（小さく＆繊細に） */
 .year {
-  font-size: 4.2vh;
-  margin: 3vh 0;
+  font-size: 3.1vh;
+  margin: 2.4vh 0;
+  letter-spacing: 0.05em;
   cursor: pointer;
   transition: opacity 0.4s ease;
 }
@@ -37,7 +38,8 @@ body {
 /* ナビ（もっとまえ） */
 .nav-more {
   margin-top: 6vh;
-  font-size: 2.6vh;
+  font-size: 2.2vh;
+  letter-spacing: 0.08em;
   cursor: pointer;
   transition: opacity 0.4s ease;
 }
@@ -48,13 +50,14 @@ body {
 
 /* 下部ナビ */
 .nav-bottom {
-  margin-top: 10vh;
+  margin-top: 9vh;
 }
 
 .nav-inline {
   display: inline-block;
-  margin: 0 5vw;
-  font-size: 2.6vh;
+  margin: 0 4vw;
+  font-size: 2.2vh;
+  letter-spacing: 0.08em;
   cursor: pointer;
   transition: opacity 0.4s ease;
 }
@@ -65,21 +68,24 @@ body {
 
 /* 記事ページ */
 .post-title {
-  font-size: 3.2vh;
-  margin-bottom: 5vh;
+  font-size: 2.8vh;
+  margin-bottom: 4vh;
+  letter-spacing: 0.05em;
 }
 
 .post-content {
-  font-size: 2.1vh;
-  line-height: 1.9;
+  font-size: 2vh;
+  line-height: 2;
   text-align: left;
 }
 
 .back-button {
   margin-top: 6vh;
-  font-size: 2.5vh;
+  font-size: 2.2vh;
   cursor: pointer;
+  transition: opacity 0.4s ease;
 }
+
 .back-button:hover {
   opacity: 0.5;
 }
@@ -97,7 +103,6 @@ fetch("posts.json")
 
   const container = document.getElementById("yearContainer");
 
-  // ===== 年一覧生成 =====
   const allYears = [...new Set(
     posts.map(post => post.date.split("-")[0])
   )].sort((a,b)=>b-a);
@@ -132,7 +137,6 @@ fetch("posts.json")
 
     const totalBlocks = yearBlocks.length;
 
-    // ===== もっとまえ =====
     if (currentBlockIndex < totalBlocks - 1) {
       const more = document.createElement("div");
       more.className = "nav-more";
@@ -141,19 +145,16 @@ fetch("posts.json")
       container.appendChild(more);
     }
 
-    // ===== 下部ナビ（中間 or 最古のみ） =====
     if (currentBlockIndex > 0) {
 
       const navBottom = document.createElement("div");
       navBottom.className = "nav-bottom";
 
-      // さいきん（1つ戻る）
       const recent = document.createElement("div");
       recent.className = "nav-inline";
       recent.textContent = "さいきん";
       recent.onclick = () => showYears(currentBlockIndex - 1);
 
-      // いま（最新へ戻る）
       const now = document.createElement("div");
       now.className = "nav-inline";
       now.textContent = "いま";
@@ -165,7 +166,6 @@ fetch("posts.json")
     }
   }
 
-  // ===== 月表示 =====
   function showMonths(year) {
     container.innerHTML = "";
 
@@ -190,7 +190,6 @@ fetch("posts.json")
     container.appendChild(back);
   }
 
-  // ===== 記事一覧 =====
   function showPosts(year, month) {
     container.innerHTML = "";
 
@@ -213,7 +212,6 @@ fetch("posts.json")
     container.appendChild(back);
   }
 
-  // ===== 記事本文 =====
   function showPostContent(post) {
     container.innerHTML = "";
 
