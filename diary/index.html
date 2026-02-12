@@ -5,24 +5,105 @@ fetch("posts.json")
 
     const container = document.getElementById("yearContainer");
 
-    // 年だけ抽出（重複削除）
-    const years = [...new Set(
-      posts.map(post => post.date.split("-")[0])
-    )];
+    function showYears() {
+      container.innerHTML = "";
 
-    years.sort((a,b)=>b-a); // 新しい年を上に
+      const years = [...new Set(
+        posts.map(post => post.date.split("-")[0])
+      )];
 
-    years.forEach(year => {
-      const div = document.createElement("div");
-      div.className = "year";
-      div.textContent = year + "年";
+      years.sort((a,b)=>b-a);
 
-      div.onclick = () => {
-        alert(year + "年のページへ（次に作る）");
-      };
+      years.forEach(year => {
+        const div = document.createElement("div");
+        div.className = "year";
+        div.textContent = year + "年";
 
-      container.appendChild(div);
-    });
+        div.onclick = () => showMonths(year);
 
+        container.appendChild(div);
+      });
+    }
+
+    function showMonths(year) {
+      container.innerHTML = "";
+
+      const months = [...new Set(
+        posts
+          .filter(post => post.date.startsWith(year))
+          .map(post => post.date.split("-")[1])
+      )];
+
+      months.sort((a,b)=>b-a);
+
+      months.forEach(month => {
+        const div = document.createElement("div");
+        div.className = "year";
+        div.textContent = parseInt(month) + "月";
+
+        div.onclick = () => showPosts(year, month);
+
+        container.appendChild(div);
+      });
+
+      // 戻るボタン
+      const back = document.createElement("div");
+      back.className = "year";
+      back.textContent = "← もどる";
+      back.onclick = showYears;
+      container.appendChild(back);
+    }
+
+    function showPosts(year, month) {
+      container.innerHTML = "";
+
+      const filtered = posts.filter(post =>
+        post.date.startsWith(year + "-" + month)
+      );
+
+      filtered.sort((a,b)=> b.date.localeCompare(a.date));
+
+      filtered.forEach(post => {
+        const div = document.createElement("div");
+        div.className = "year";
+        div.textContent = post.title;
+
+        div.onclick = () => showPostContent(post);
+
+        container.appendChild(div);
+      });
+
+      const back = document.createElement("div");
+      back.className = "year";
+      back.textContent = "← もどる";
+      back.onclick = () => showMonths(year);
+      container.appendChild(back);
+    }
+
+    function showPostContent(post) {
+      container.innerHTML = "";
+
+      const title = document.createElement("div");
+      title.className = "year";
+      title.style.fontSize = "3vh";
+      title.textContent = post.title;
+
+      const content = document.createElement("div");
+      content.style.marginTop = "3vh";
+      content.style.fontSize = "2vh";
+      content.textContent = post.content;
+
+      container.appendChild(title);
+      container.appendChild(content);
+
+      const back = document.createElement("div");
+      back.className = "year";
+      back.style.marginTop = "4vh";
+      back.textContent = "← もどる";
+      back.onclick = showYears;
+      container.appendChild(back);
+    }
+
+    showYears();
   });
 </script>
