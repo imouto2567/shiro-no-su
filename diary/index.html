@@ -10,7 +10,7 @@
 <style>
 body {
   margin: 0;
-  background: #ffffff; /* 完全な白 */
+  background: #ffffff;
   font-family: "Hiragino Mincho ProN", serif;
   color: #777;
 }
@@ -22,7 +22,7 @@ body {
   padding-bottom: 20vh;
   max-width: 700px;
   margin: 0 auto;
-  background: #ffffff; /* 念のため白 */
+  background: #ffffff;
 }
 
 /* 年表示 */
@@ -79,9 +79,22 @@ body {
   font-size: 2vh;
   line-height: 2;
   text-align: left;
-  background: #ffffff; /* 本文も白 */
+  background: #ffffff;
 }
 
+/* 画像 */
+.post-image {
+  width: 100%;
+  height: auto;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* 戻る */
 .back-button {
   margin-top: 6vh;
   font-size: 2.2vh;
@@ -106,9 +119,9 @@ document.addEventListener("contextmenu", function(e) {
   e.preventDefault();
 });
 
-/* キーボードズーム禁止（Ctrl + / Cmd +） */
+/* キーボードズーム禁止 */
 document.addEventListener("keydown", function(e) {
-  if ((e.ctrlKey || e.metaKey) && 
+  if ((e.ctrlKey || e.metaKey) &&
       (e.key === "+" || e.key === "-" || e.key === "=")) {
     e.preventDefault();
   }
@@ -236,17 +249,34 @@ fetch("posts.json")
     title.className = "post-title";
     title.textContent = post.title;
 
+    container.appendChild(title);
+
+    /* 本文 */
     const content = document.createElement("div");
     content.className = "post-content";
     content.innerHTML = post.content.replace(/\n/g, "<br>");
 
-    container.appendChild(title);
     container.appendChild(content);
+
+    /* 画像表示 */
+    if (post.images && post.images.length > 0) {
+
+      post.images.forEach(src => {
+
+        const img = document.createElement("img");
+        img.src = src;
+        img.className = "post-image";
+
+        container.appendChild(img);
+
+      });
+    }
 
     const back = document.createElement("div");
     back.className = "back-button";
     back.textContent = "← もどる";
     back.onclick = () => showYears(currentBlockIndex);
+
     container.appendChild(back);
   }
 
