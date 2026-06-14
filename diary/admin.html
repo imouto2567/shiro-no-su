@@ -28,24 +28,26 @@ label{
     margin-bottom:10px;
 }
 
-input{
+input,
+textarea{
     width:100%;
     box-sizing:border-box;
     padding:12px;
     font-size:16px;
 }
 
-textarea{
-    width:100%;
+#content{
     height:300px;
-    box-sizing:border-box;
-    padding:12px;
-    font-size:16px;
+    resize:vertical;
+}
+
+#images{
+    height:120px;
     resize:vertical;
 }
 
 button{
-    margin-top:30px;
+    margin-top:20px;
     width:100%;
     padding:15px;
     font-size:18px;
@@ -73,6 +75,9 @@ pre{
 <label>本文</label>
 <textarea id="content"></textarea>
 
+<label>画像（1行に1枚）</label>
+<textarea id="images"></textarea>
+
 <button onclick="generateJson()">
 JSON生成
 </button>
@@ -99,11 +104,22 @@ function generateJson(){
         today.getDate()
     ).padStart(2,"0");
 
+    const imageList =
+        document.getElementById("images")
+        .value
+        .split("\n")
+        .map(v => v.trim())
+        .filter(v => v !== "");
+
     const data = {
         date: `${year}-${month}-${day}`,
         title: document.getElementById("title").value,
         content: document.getElementById("content").value
     };
+
+    if(imageList.length > 0){
+        data.images = imageList;
+    }
 
     document.getElementById("result").textContent =
         JSON.stringify(data,null,2);
