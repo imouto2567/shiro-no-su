@@ -77,6 +77,10 @@ pre{
 JSON生成
 </button>
 
+<button onclick="copyJson()">
+コピー
+</button>
+
 <pre id="result"></pre>
 
 <script>
@@ -103,6 +107,22 @@ function generateJson(){
 
     document.getElementById("result").textContent =
         JSON.stringify(data,null,2);
+
+}
+
+function copyJson(){
+
+    const text =
+        document.getElementById("result").textContent;
+
+    if(!text){
+        alert("先にJSONを生成してください");
+        return;
+    }
+
+    navigator.clipboard.writeText(text);
+
+    alert("コピーしました");
 
 }
 
