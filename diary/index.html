@@ -314,6 +314,9 @@ fetch("posts.json")
 })
 .catch(error => {
   console.error("JSON読み込みエラー:", error);
+  const container = document.getElementById("yearContainer");
+  container.innerHTML =
+    '<div style="font-size:2vh; opacity:0.7;">まだ日記はありません。</div>';
 });
 </script>
 </body>
