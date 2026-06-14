@@ -140,6 +140,14 @@ fetch("posts.json")
 
   const container = document.getElementById("yearContainer");
 
+  if (posts.length === 0) {
+
+    container.innerHTML =
+      '<div style="font-size:2vh; opacity:0.7;">まだ日記はありません。</div>';
+
+    return;
+  }
+
   const allYears = [...new Set(
     posts.map(post => post.date.split("-")[0])
   )].sort((a,b)=>b-a);
