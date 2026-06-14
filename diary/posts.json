@@ -1,5 +1,9 @@
 {
   "date": "2026-06-14",
-  "title": "テストのわたし",
-  "content": "これはテストだよ。\nimages/20260614_01.jpg"
+  "title": "test",
+  "content": "テストの妹ちゃんだよ。",
+  "images": [
+    "images/20260614_01.jpg",
+    "images/test.PNG"
+  ]
 }
